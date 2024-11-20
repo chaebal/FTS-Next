@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 // export default function RootLayout({ children }: RootLayoutProps) {
 //   return (
@@ -56,7 +57,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SessionProvider>{children}</SessionProvider>
+          <EdgeStoreProvider>
+            <SessionProvider>{children}</SessionProvider>
+          </EdgeStoreProvider>
         </ThemeProvider>
       </body>
     </html>
