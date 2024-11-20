@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import Link from "next/link";
 import { signIn } from "next-auth/react";
 
 export default function Login() {
