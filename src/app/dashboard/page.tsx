@@ -22,26 +22,29 @@ import { FaTrophy, FaRegHandshake } from "react-icons/fa";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { useEffect, useState } from "react";
 import database from "../database/page";
+import Dropdown from "@/components/dropdown";
 
 export default function Page() {
   const { data: session } = useSession();
   console.log(session?.user?.name);
 
-  // async function getServerSideProps() {
-  //   const teamStats = await getTeamStats(db); // Fetch team stats from Firebase
-  //   return {
-  //     props: {
-  //       teamStats, // Pass teamStats as a prop to the component
-  //     },
-  //   };
-  // }
+  const [teamStats, setTeamStats] = useState<{
+    Wins: number;
+    Draws: number;
+    Losses: number;
+  }>({
+    Wins: 0,
+    Draws: 0,
+    Losses: 0,
+  });
 
-  const [teamStats, setTeamStats] = useState<any>();
+  const [output, setOutput] = useState(0);
 
   useEffect(() => {
     const fetchTeamStats = async () => {
       const stats = await database();
-      setTeamStats(stats);
+      // setTeamStats(stats || { Wins: 0, Draws: 0, Losses: 0 });
+      setTeamStats(stats as { Wins: number; Draws: number; Losses: number });
     };
     fetchTeamStats();
   }, []);
@@ -76,7 +79,6 @@ export default function Page() {
               <h1 className="mb-4 mt-4 text-center">Analyzer AI</h1>
               <MultiFileDropzone />
             </div>
-
             <div className="aspect-video rounded-xl bg-muted/50 flex justify-between">
               <div className="ml-3 flex flex-col items-center">
                 <h1 className="mt-6 flex">
@@ -100,10 +102,36 @@ export default function Page() {
                 <h1 className="text-center">{teamStats.Losses} </h1>
               </div>
             </div>
+            <div className="aspect-video rounded-xl bg-muted/50 row-span-3 h-full max-w-full">
+              Formation
+            </div>
+            <div className="aspect-video rounded-xl bg-muted/50 "></div>
+            {/* --------------------------------- */}
+            <div className="aspect-video rounded-xl bg-muted/50 row-span-2 h-full max-w-full justify-center items-center flex relative">
+              {/* <Dropdown onOutputChange={setOutput} />
+              <div className="text-center">
+                <h1>{output}%</h1>
+              </div> */}
 
-            <div className="aspect-[3/5] rounded-xl bg-muted/50"></div>
+              {/* Dropdown at the top-left corner */}
+              <div className="absolute top-0 left-0">
+                <Dropdown onOutputChange={setOutput} />
+              </div>
+
+              {/* Output centered */}
+              <div className="text-center">
+                <h1 className="text-4xl">{output}%</h1>
+              </div>
+            </div>
+            {/* --------------------------------- */}
+            <div className="aspect-video rounded-xl bg-muted/50"></div>
+
+            {/* <div className="aspect-video rounded-xl bg-muted/50">Formation</div> */}
           </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+
+          {/* <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min">
+            Result
+          </div> */}
         </div>
       </SidebarInset>
     </SidebarProvider>
