@@ -23,6 +23,9 @@ import { IoMdCloseCircleOutline } from "react-icons/io";
 import { useEffect, useState } from "react";
 import database from "../database/page";
 import Dropdown from "@/components/dropdown";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import Court from "../court/page";
 
 export default function Page() {
   const { data: session } = useSession();
@@ -80,30 +83,36 @@ export default function Page() {
               <MultiFileDropzone />
             </div>
             <div className="aspect-video rounded-xl bg-muted/50 flex justify-between">
-              <div className="ml-3 flex flex-col items-center">
+              <div className="ml-5 flex flex-col items-center">
                 <h1 className="mt-6 flex">
                   <FaTrophy className="mt-1 mr-2" />
                   Wins
                 </h1>
-                <h1 className="text-center">{teamStats.Wins} </h1>
+                <h1 className="text-center text-5xl mt-10">
+                  {teamStats.Wins}{" "}
+                </h1>
               </div>
               <div className="flex flex-col items-center">
                 <h1 className="mt-6 flex">
                   <FaRegHandshake className="mt-1 mr-1" />
                   Draws
                 </h1>
-                <h1 className="text-center">{teamStats.Draws} </h1>
+                <h1 className="text-center text-5xl mt-10">
+                  {teamStats.Draws}{" "}
+                </h1>
               </div>
-              <div className="flex flex-col items-center mr-3">
+              <div className="flex flex-col items-center mr-5">
                 <h1 className="mt-6 flex">
                   <IoMdCloseCircleOutline className="mt-1 mr-1" />
                   Losses
                 </h1>
-                <h1 className="text-center">{teamStats.Losses} </h1>
+                <h1 className="text-center text-5xl mt-10">
+                  {teamStats.Losses}{" "}
+                </h1>
               </div>
             </div>
-            <div className="aspect-video rounded-xl bg-muted/50 row-span-3 h-full max-w-full">
-              Formation
+            <div className="aspect-video rounded-xl bg-muted/50 row-span-3 h-full max-w-full items-center justify-center flex">
+              <Court />
             </div>
             <div className="aspect-video rounded-xl bg-muted/50 "></div>
             {/* --------------------------------- */}
@@ -114,13 +123,14 @@ export default function Page() {
               </div> */}
 
               {/* Dropdown at the top-left corner */}
-              <div className="absolute top-0 left-0">
+              <div className="absolute top-3 left-5">
                 <Dropdown onOutputChange={setOutput} />
               </div>
 
               {/* Output centered */}
               <div className="text-center">
-                <h1 className="text-4xl">{output}%</h1>
+                {/* <h1 className="text-4xl">{output}%</h1> */}
+                <CircularProgressbar value={output} text={`${output}%`} />
               </div>
             </div>
             {/* --------------------------------- */}
