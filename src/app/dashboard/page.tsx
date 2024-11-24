@@ -26,6 +26,16 @@ import Dropdown from "@/components/dropdown";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import Court from "../court/page";
+import NewsCarousel from "../carousel/page";
+
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function Page() {
   const { data: session } = useSession();
@@ -82,7 +92,7 @@ export default function Page() {
               <h1 className="mb-4 mt-4 text-center">Analyzer AI</h1>
               <MultiFileDropzone />
             </div>
-            <div className="aspect-video rounded-xl bg-muted/50 flex justify-between">
+            {/* <div className="aspect-video rounded-xl bg-muted/50 flex justify-between">
               <div className="ml-5 flex flex-col items-center">
                 <h1 className="mt-6 flex">
                   <FaTrophy className="mt-1 mr-2" />
@@ -110,11 +120,42 @@ export default function Page() {
                   {teamStats.Losses}{" "}
                 </h1>
               </div>
+            </div> */}
+            <div className="aspect-video rounded-xl bg-muted/50 flex flex-wrap justify-center items-center">
+              <div className="flex flex-col items-center mx-3">
+                <h1 className="mt-6 flex text-lg md:text-base">
+                  <FaTrophy className="mt-1 mr-2" />
+                  Wins
+                </h1>
+                <h1 className="text-center text-4xl sm:text-3xl mt-6">
+                  {teamStats.Wins}
+                </h1>
+              </div>
+              <div className="flex flex-col items-center mx-3">
+                <h1 className="mt-6 flex text-lg md:text-base">
+                  <FaRegHandshake className="mt-1 mr-1" />
+                  Draws
+                </h1>
+                <h1 className="text-center text-4xl sm:text-3xl mt-6">
+                  {teamStats.Draws}
+                </h1>
+              </div>
+              <div className="flex flex-col items-center mx-3">
+                <h1 className="mt-6 flex text-lg md:text-base">
+                  <IoMdCloseCircleOutline className="mt-1 mr-1" />
+                  Losses
+                </h1>
+                <h1 className="text-center text-4xl sm:text-3xl mt-6">
+                  {teamStats.Losses}
+                </h1>
+              </div>
             </div>
             <div className="aspect-video rounded-xl bg-muted/50 row-span-3 h-full max-w-full items-center justify-center flex">
               <Court />
             </div>
-            <div className="aspect-video rounded-xl bg-muted/50 "></div>
+            <div className="aspect-video rounded-xl bg-muted/50 w-full row-span-2">
+              <NewsCarousel />
+            </div>
             {/* --------------------------------- */}
             <div className="aspect-video rounded-xl bg-muted/50 row-span-2 h-full max-w-full justify-center items-center flex relative">
               {/* <Dropdown onOutputChange={setOutput} />
@@ -134,7 +175,7 @@ export default function Page() {
               </div>
             </div>
             {/* --------------------------------- */}
-            <div className="aspect-video rounded-xl bg-muted/50"></div>
+            {/* <div className="aspect-video rounded-xl bg-muted/50"></div> */}
 
             {/* <div className="aspect-video rounded-xl bg-muted/50">Formation</div> */}
           </div>

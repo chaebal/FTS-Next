@@ -75,6 +75,10 @@
   background-color: transparent; /* Ensure it blends with the field */
 }
 
+.player-container {
+  position: relative; /* This is to position the stats inside the container */
+}
+
 .player {
   position: absolute; /* Remove absolute positioning for vertical alignment */
   width: 40px;
@@ -87,6 +91,29 @@
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.player:hover {
+  color: black;
+  /* visibility: visible;
+  opacity: 1; */
+}
+
+.player-stats {
+  visibility: hidden; /* Hide stats initially */
+  opacity: 0; /* Make it invisible */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  position: absolute;
+  bottom: 100%; /* Position it above the player circle */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  color: black;
+  z-index: 10; /* Ensure it appears above other elements */
 }
 
 .formationSelect {
