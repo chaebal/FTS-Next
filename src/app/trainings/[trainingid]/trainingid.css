@@ -1,0 +1,54 @@
+/* The grid layout for the cards */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  grid-gap: 20px; /* Space between the cards */
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.metric-card {
+  /* Customize card style here if needed */
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.card-header {
+  font-size: 0.9rem;
+  color: #555;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.card-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.card-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.no-data-card {
+  grid-column: span 2;
+  text-align: center;
+  background-color: #e0e0e0;
+  padding: 20px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}

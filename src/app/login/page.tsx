@@ -25,7 +25,7 @@ export default function Login() {
               className="flex mb-4 w-full h-[75%] items-center gap-1 px-12 bg-transparent rounded-full"
               variant="outline"
               onClick={() => {
-                signIn("google", { callbackUrl: "/secret" });
+                signIn("google", { callbackUrl: "/dashboard" });
               }}
             >
               <FcGoogle /> Google Sign In

@@ -33,7 +33,12 @@ export default function Dropdown({ onOutputChange }: DropdownProps) {
 
   console.log(output);
 
-  onOutputChange(output);
+  // onOutputChange(output);
+
+  // Notify parent only when the output changes
+  useEffect(() => {
+    onOutputChange(output);
+  }, [output, onOutputChange]); // Adding onOutputChange to dependencies is good practice
 
   return (
     <DropdownMenu>

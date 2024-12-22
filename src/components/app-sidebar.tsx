@@ -116,7 +116,7 @@ const data = {
       ],
     },
     {
-      title: "Settings",
+      title: "Manage Team",
       url: "#",
       icon: Settings2,
       items: [

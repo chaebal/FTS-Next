@@ -13,6 +13,8 @@ type Context = {
 function createContext({ req }: CreateContextOptions): Context {
   // get the session from your auth provider
   // const session = getSession(req);
+  console.log("Request received:", req.method, req.url);
+
   return {
     userId: "1234",
     userRole: "user",
@@ -44,7 +46,7 @@ const edgeStoreRouter = es.router({
           userId: { path: "owner" },
         },
         {
-          userRole: { eq: "admin" },
+          userRole: { eq: "user" },
         },
       ],
     }),
@@ -64,45 +66,45 @@ export type EdgeStoreRouter = typeof edgeStoreRouter;
 //   CreateContextOptions,
 //   createEdgeStoreNextHandler,
 // } from "@edgestore/server/adapters/next/app";
-// const es = initEdgeStore.context<Context>().create();
+// // const es = initEdgeStore.context<Context>().create();
+// const es = initEdgeStore.create();
 // /**
 //  * This is the main router for the Edge Store buckets.
 //  */
 
-// type Context = {
-//   userId: string;
-//   userRole: "admin" | "user";
-// };
+// // type Context = {
+// //   userId: string;
+// //   userRole: "admin" | "user";
+// // };
 
-// function createContext({ req }: CreateContextOptions): Context {
-//   //get session from auth provider
+// // function createContext({ req }: CreateContextOptions): Context {
+// //   //get session from auth provider
 
-//   return {
-//     userId: "1234",
-//     userRole: "user",
-//   };
-// }
+// //   return {
+// //     userId: "1234",
+// //     userRole: "user",
+// //   };
+// // }
 
 // const edgeStoreRouter = es.router({
 //   publicImages: es.imageBucket(),
-//   publicFiles: es
-//     .fileBucket()
-//     .path(({ ctx }) => [{ owner: ctx.userId }])
-//     .accessControl({
-//       OR: [
-//         {
-//           userId: { path: "owner" },
-//         },
-//         {
-//           userRole: { eq: "admin" },
-//         },
-//       ],
-//     }), //  e.g /123/my-file.pdf
+//   publicFiles: es.fileBucket(),
+//   // .path(({ ctx }) => [{ owner: ctx.userId }])
+//   // .accessControl({
+//   //   OR: [
+//   //     {
+//   //       userId: { path: "owner" },
+//   //     },
+//   //     {
+//   //       userRole: { eq: "admin" },
+//   //     },
+//   //   ],
+//   // }), //  e.g /123/my-file.pdf
 // });
 
 // const handler = createEdgeStoreNextHandler({
 //   router: edgeStoreRouter,
-//   createContext,
+//   // createContext,
 // });
 // export { handler as GET, handler as POST };
 // /**
