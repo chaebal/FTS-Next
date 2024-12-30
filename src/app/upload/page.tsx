@@ -46,7 +46,9 @@ const VideoUpload = () => {
       }
 
       const data = await response.json();
-      setUploadMessage(data.info);
+      console.log("data", data);
+      console.log("data.info", data.info);
+      setUploadMessage(data.message);
       setDownloadLink(data.download_link);
     } catch (error) {
       setUploadMessage("An error occurred while uploading.");

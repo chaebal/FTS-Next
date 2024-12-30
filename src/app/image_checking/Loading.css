@@ -1,0 +1,91 @@
+/* CSS for Image Modal (Popup) */
+.popup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+  z-index: 9999; /* To ensure it's on top */
+}
+
+.popup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark overlay */
+}
+
+.popup-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  background-color: grey;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.close-popup-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.popup-content img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  cursor: crosshair; /* Change cursor to crosshair on image click */
+}
+
+.canvas-container {
+  position: relative;
+  display: inline-block;
+}
+
+.canvas-container canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none; /* Ensures that clicking on the canvas passes the click to the image below */
+}
+
+/* CSS for the coordinates input section */
+.coordinates-inputs {
+  margin-top: 10px;
+  /* display: flex;
+  flex-direction: column; */
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 10px; /* Spacing between grid items */
+}
+
+.coordinates-inputs label {
+  /* margin: 5px 0; */
+  margin: 0; /* Align with grid structure */
+}
+
+.coordinates-inputs input {
+  /* width: 200px;
+  padding: 5px;
+  margin-top: 5px;
+  cursor: pointer; */
+
+  width: 180px; /* Adjusted width for better alignment */
+  padding: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+}
