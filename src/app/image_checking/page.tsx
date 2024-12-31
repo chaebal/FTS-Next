@@ -106,6 +106,11 @@ const ImageChecking = () => {
 
   const handleSubmit = async () => {
     setIsLoading(true); // Set loading to true
+
+    if (!video) {
+      // setUploadMessage("Please choose a video file.");
+      return;
+    }
     const payload = {
       coordinates: inputCoordinates,
       distances: inputDistance,
@@ -137,6 +142,34 @@ const ImageChecking = () => {
       console.error("Error in sending coordinates and distances", error);
     } finally {
       setIsLoading(false); // Stop loading state
+    }
+
+    const formData = new FormData();
+    formData.append("file", video);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/upload/", {
+        method: "POST",
+        body: formData,
+        headers: {
+          // No custom CORS headers needed here
+        },
+      });
+
+      if (!response.ok) {
+        // setUploadMessage("Failed to upload video. Please try again.");
+        return;
+      }
+
+      const data = await response.json();
+      console.log("data", data);
+      console.log("data.info", data.info);
+      // setUploadMessage(data.message);
+      // setDownloadLink(data.download_link);
+    } catch (error) {
+      // setUploadMessage("An error occurred while uploading.");
+    } finally {
+      // setLoading(false);
     }
   };
 
