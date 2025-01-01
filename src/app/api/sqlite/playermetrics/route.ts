@@ -2,9 +2,7 @@ import sqlite3 from "better-sqlite3";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 
-const dbPath = path.resolve(
-  "/Users/adam/Documents/fts-backend/futsal_analysis.db"
-);
+const dbPath = path.resolve("/Users/adam/Documents/fts-backend/futsal_db.db");
 const db = sqlite3(dbPath);
 
 interface stats {

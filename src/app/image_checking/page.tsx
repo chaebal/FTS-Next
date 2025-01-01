@@ -16,6 +16,7 @@ const ImageChecking = () => {
   const [frameUrl, setFrameUrl] = useState<string | null>(null);
   const [popupOpen, setPopupOpen] = useState(false); // State for popup visibility
   const [selectedInputs, setSelectedInputs] = useState<string | null>(null); // To track which input (A/B/C/D) is selected
+
   const [inputCoordinates, setInputCoordinates] = useState<{
     A: string | null;
     B: string | null;
@@ -38,23 +39,6 @@ const ImageChecking = () => {
     AC: null,
     CD: null,
   });
-
-  // const ImageChecking = () => {
-  //   const [video, setVideo] = useState<File | null>(null);
-  //   const [frameUrl, setFrameUrl] = useState<string | null>(null);
-  //   const [popupOpen, setPopupOpen] = useState(false); // State for popup visibility
-  //   const [selectedInputs, setSelectedInputs] = useState<string | null>(null); // To track which input (A/B/C/D) is selected
-  //   const [inputCoordinates, setInputCoordinates] = useState<{
-  //     A: Coordinate;
-  //     B: Coordinate;
-  //     C: Coordinate;
-  //     D: Coordinate;
-  //   }>({
-  //     A: null,
-  //     B: null,
-  //     C: null,
-  //     D: null,
-  //   });
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null); // Ref for canvas
   const imgRef = useRef<HTMLImageElement | null>(null); // Ref for image
@@ -245,11 +229,21 @@ const ImageChecking = () => {
   }, [inputCoordinates]);
 
   return (
-    <div>
-      <h1>Upload Video and Extract Frame</h1>
-
-      <input type="file" accept="video/*" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload and Extract Frame</button>
+    <div className="flex flex-col justify-center items-center">
+      <input
+        type="file"
+        accept="video/*"
+        onChange={handleFileChange}
+        className="border"
+      />
+      <Button
+        // className="mt-3 bg-purple-900 shadow-lg"
+        className="mt-3 bg-gradient-to-tr from-purple-500 to-black-200 text-white shadow-lg"
+        variant="ghost"
+        onClick={handleUpload}
+      >
+        Upload
+      </Button>
 
       {frameUrl && (
         <div>
