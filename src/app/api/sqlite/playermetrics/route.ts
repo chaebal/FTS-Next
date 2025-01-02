@@ -68,3 +68,66 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    // Parse request parameters from the URL or the body
+    const { searchParams } = new URL(req.url);
+    const player_id = searchParams.get("player_id");
+    const session_no = searchParams.get("session_no");
+
+    if (!player_id) {
+      return new Response(
+        JSON.stringify({ error: "Player ID is required for deletion" }),
+        { status: 400 }
+      );
+    }
+
+    if (!session_no) {
+      return new Response(
+        JSON.stringify({ error: "Session No is not found" }),
+        { status: 400 }
+      );
+    }
+
+    db.prepare(
+      `
+        DELETE FROM PlayerMetrics WHERE player_id = ? AND session_no = ?
+    `
+    ).run(player_id, session_no);
+
+    const remainingRow = db
+      .prepare(
+        `SELECT * FROM PlayerMetrics WHERE player_id = ? AND session_no = ?`
+      )
+      .get(player_id, session_no);
+
+    // Check if any row was deleted
+    if (!remainingRow) {
+      db.prepare(
+        `
+      UPDATE PlayerMetrics
+SET session_no = session_no - 1
+WHERE player_id = ? AND session_no > ?
+    `
+      ).run(player_id, session_no);
+      return new Response(
+        JSON.stringify({
+          message: "Record deleted successfully and session has been reordered",
+          deletedRecord: remainingRow,
+        }),
+        { status: 200 }
+      );
+    }
+
+    // Return success response
+  } catch (error) {
+    // Return error response
+    return new Response(
+      JSON.stringify({
+        error: "An error occurred while deleting the record",
+      }),
+      { status: 500 }
+    );
+  }
+}

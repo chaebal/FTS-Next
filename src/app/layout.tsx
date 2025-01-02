@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { ToastContainer } from "react-toastify";
 
 // export default function RootLayout({ children }: RootLayoutProps) {
 //   return (
@@ -58,7 +59,17 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <EdgeStoreProvider>
-            <SessionProvider>{children}</SessionProvider>
+            <SessionProvider>
+              {children}{" "}
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+              />
+            </SessionProvider>
           </EdgeStoreProvider>
         </ThemeProvider>
       </body>

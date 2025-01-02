@@ -11,6 +11,9 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { Video } from "lucide-react";
 import ImageChecking from "@/app/image_checking/page";
 import { Button } from "@nextui-org/button";
+import { toast } from "react-toastify";
+import Popup from "reactjs-popup";
+
 import {
   Card,
   CardHeader,
@@ -83,6 +86,7 @@ const TrainingDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [modalVisibility, setModalVisibility] = useState<number | null>(null);
 
   const itemsPerPage = 3;
 
@@ -90,6 +94,7 @@ const TrainingDetails = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentMetrics = metrics.slice(startIndex, endIndex);
+  const [isModalVisibleCancel, setIsModalVisibleCancel] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,6 +130,58 @@ const TrainingDetails = () => {
   const closeModal = () => {
     setIsModalVisible(false); // Hide the modal
     setVideoUrl(""); // Reset the video URL
+  };
+
+  const handleDelete = async (session_no: number) => {
+    console.log("Session to be deleted: ", session_no);
+    try {
+      const response = await fetch(
+        `/api/sqlite/playermetrics?player_id=${1}&session_no=${session_no}`,
+        {
+          method: "DELETE", // Specify DELETE method
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete record");
+      }
+
+      try {
+        const response = await fetch(
+          // `/api/sqlite/playermetrics?player_id=${playerID}`
+          `/api/sqlite/playermetrics?player_id=${1}`
+        );
+        const result = await response.json();
+        console.log("result", result);
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to fetch metrics.");
+        }
+
+        setMetrics(result.metrics);
+        console.log(metrics);
+        setError(null);
+        console.log("Record deleted successfully");
+        toast.success("Deletion Successful!");
+      } catch (error) {
+        toast.error("Error deleting record!");
+      } finally {
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error deleting record:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisibleCancel(false);
+    setModalVisibility(null);
+  };
+
+  const handleDeleteButton = (session_no: number) => {
+    setIsModalVisibleCancel(true);
+  };
+
+  const showDeleteModal = (session_no: number) => {
+    setModalVisibility(session_no); // Show the modal for a specific session
   };
 
   return (
@@ -261,7 +318,30 @@ const TrainingDetails = () => {
                         >
                           <Button>Download</Button>
                         </a>
-                        <Button>More</Button>
+                        <Button
+                          onClick={() => showDeleteModal(metric.session_no)}
+                        >
+                          Delete
+                        </Button>
+                        {modalVisibility === metric.session_no && (
+                          <div className="modal">
+                            <div className="modal-content">
+                              <h3>
+                                Are you sure you want to delete this session?
+                              </h3>
+                              <div className="modal-actions">
+                                <Button
+                                  onClick={() =>
+                                    handleDelete(metric.session_no)
+                                  }
+                                >
+                                  Confirm
+                                </Button>
+                                <Button onClick={handleCancel}>Cancel</Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardBody>
