@@ -95,6 +95,7 @@ const ImageChecking = () => {
       // setUploadMessage("Please choose a video file.");
       return;
     }
+
     const payload = {
       coordinates: inputCoordinates,
       distances: inputDistance,
@@ -131,6 +132,11 @@ const ImageChecking = () => {
     const formData = new FormData();
     formData.append("file", video);
 
+    if (frameUrl !== null) {
+      formData.append("frame", frameUrl);
+    } else {
+      console.error("Error: frameUrl is null");
+    }
     try {
       const response = await fetch("http://127.0.0.1:8000/upload/", {
         method: "POST",
