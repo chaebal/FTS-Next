@@ -13,6 +13,7 @@ import ImageChecking from "@/app/image_checking/page";
 import { Button } from "@nextui-org/button";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
+import { FcGoogle } from "react-icons/fc";
 
 import {
   Card,
@@ -95,6 +96,12 @@ const TrainingDetails = () => {
   const endIndex = startIndex + itemsPerPage;
   const currentMetrics = metrics.slice(startIndex, endIndex);
   const [isModalVisibleCancel, setIsModalVisibleCancel] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const togglePopup = () => {
+    setIsOpen(!isOpen);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -198,9 +205,56 @@ const TrainingDetails = () => {
           ></NavbarContent>
           <NavbarContent justify="end">
             <NavbarItem className="hidden lg:flex">
-              <Link href="#">Login</Link>
+              <Link href="#" onClick={togglePopup}>
+                Login
+              </Link>
             </NavbarItem>
             <NavbarItem>
+              {isOpen && (
+                <div className="absolute top-16 right-4 bg-white shadow-lg rounded-md p-4 z-10 justify-center items-center">
+                  <form className="space-y-4">
+                    <div>
+                      <label htmlFor="username" className="block text-gray-700">
+                        Username
+                      </label>
+                      <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="password" className="block text-gray-700">
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full bg-indigo-500 text-white py-1 rounded-md hover:bg-indigo-600"
+                    >
+                      Login
+                    </button>
+                  </form>
+                  <div className="flex justify-center mt-4">
+                    <Button
+                      className="flex text-center gap-2 px-4 py-2 border border-gray-300 rounded-full text-white hover:border-gray-500 transition-all"
+                      // onClick={() => {
+                      //   signIn("google", { callbackUrl: "/dashboard" });
+                      // }}
+                    >
+                      <FcGoogle />
+                      <span className="text-white text-sm">Google Sign In</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
               <Button as={Link} color="primary" href="#" variant="flat">
                 Sign Up
               </Button>
@@ -229,138 +283,145 @@ const TrainingDetails = () => {
             <ImageChecking />
           </div>
         </div>
-        <div className="flex flex-2 flex-col gap-4 p-4 pt-0 mt-3 w-full items-center">
-          {/* {metrics && metrics.length > 0 ? ( */}
-          {currentMetrics && currentMetrics.length > 0 ? (
-            currentMetrics.map((metric, index) => (
-              // metrics.map((metric, index) => (
-              <React.Fragment key={index}>
-                <Card className="py-4 bg-gradient-to-br from-purple-900 to-black-200 w-3/4">
-                  <div className="flex-col gap-4">
-                    <h1 className="text-center text-2xl font-bold mb-5">
-                      Summary
-                    </h1>
-                    <CardHeader className="pb-0 pt-2 px-4 items-start justify-between">
-                      <div>
-                        <h4 className="font-bold text-2xl sm:text-md md:text-lg lg:text-xl xl:text-2xl truncate">
-                          Session {metric.session_no}
-                        </h4>
-                      </div>
-                      <div className="w-full text-center">
-                        <h1 className="text-sm">Average Speed</h1>
-                        <p className="text-2xl sm:text-md md:text-xl lg:text-3xl xl:text-4xl mt-3">{`${metric.speed.toFixed(
-                          2
-                        )} m/s`}</p>
-                      </div>
-                      <div className="w-full text-center">
-                        <h1 className="text-sm">Total Distance Covered</h1>
-                        <p className="text-2xl sm:text-md md:text-xl lg:text-3xl xl:text-4xl mt-3">
-                          {`${metric.distance.toFixed(2)} m`}
-                        </p>
-                      </div>
-                      <div className="w-full text-center">
-                        <h1 className="text-sm">Time Taken</h1>
-                        <p className="text-2xl sm:text-md md:text-xl lg:text-3xl xl:text-4xl mt-3">
-                          {metric.time} s
-                        </p>
-                      </div>
-                    </CardHeader>
-                  </div>
-                  <CardBody className="overflow-visible py-2 flex flex-row">
-                    <Image
-                      alt="Card background"
-                      className="object-cover rounded-xl"
-                      src={metric.frame_url}
-                      width={140}
-                    />
-                    <div className="flex-1 flex flex-col justify-end items-center h-">
-                      <div className="flex space-x-4">
-                        <Button
-                          className="bg-blue-500 text-white px-4 py-2 rounded "
-                          onClick={handleViewClick}
-                        >
-                          View
-                        </Button>
-
-                        {/* Modal */}
-                        {isModalVisible && (
-                          <div
-                            className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50"
-                            onClick={closeModal} // Close the modal when clicking outside the content
+        {isUser ? (
+          <div className="flex flex-2 flex-col gap-4 p-4 pt-0 mt-3 w-full items-center">
+            {/* {metrics && metrics.length > 0 ? ( */}
+            {currentMetrics && currentMetrics.length > 0 ? (
+              currentMetrics.map((metric, index) => (
+                // metrics.map((metric, index) => (
+                <React.Fragment key={index}>
+                  <Card className="py-4 bg-gradient-to-br from-purple-900 to-black-200 w-3/4">
+                    <div className="flex-col gap-4">
+                      <h1 className="text-center text-2xl font-bold mb-5">
+                        Summary
+                      </h1>
+                      <CardHeader className="pb-0 pt-2 px-4 items-start justify-between">
+                        <div>
+                          <h4 className="font-bold text-2xl sm:text-md md:text-lg lg:text-xl xl:text-2xl truncate">
+                            Session {metric.session_no}
+                          </h4>
+                        </div>
+                        <div className="w-full text-center">
+                          <h1 className="text-sm">Average Speed</h1>
+                          <p className="text-2xl sm:text-md md:text-xl lg:text-3xl xl:text-4xl mt-3">{`${metric.speed.toFixed(
+                            2
+                          )} m/s`}</p>
+                        </div>
+                        <div className="w-full text-center">
+                          <h1 className="text-sm">Total Distance Covered</h1>
+                          <p className="text-2xl sm:text-md md:text-xl lg:text-3xl xl:text-4xl mt-3">
+                            {`${metric.distance.toFixed(2)} m`}
+                          </p>
+                        </div>
+                        <div className="w-full text-center">
+                          <h1 className="text-sm">Time Taken</h1>
+                          <p className="text-2xl sm:text-md md:text-xl lg:text-3xl xl:text-4xl mt-3">
+                            {metric.time} s
+                          </p>
+                        </div>
+                      </CardHeader>
+                    </div>
+                    <CardBody className="overflow-visible py-2 flex flex-row">
+                      <Image
+                        alt="Card background"
+                        className="object-cover rounded-xl"
+                        src={metric.frame_url}
+                        width={140}
+                      />
+                      <div className="flex-1 flex flex-col justify-end items-center h-">
+                        <div className="flex space-x-4">
+                          <Button
+                            className="bg-blue-500 text-white px-4 py-2 rounded "
+                            onClick={handleViewClick}
                           >
-                            <div
-                              className="bg-white rounded-lg overflow-hidden p-4 relative"
-                              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal content
-                            >
-                              <Button
-                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex justify-center items-center"
-                                onClick={closeModal}
-                              >
-                                ✕
-                              </Button>
+                            View
+                          </Button>
 
-                              <video controls width="600">
-                                <source
-                                  src="http://127.0.0.1:8000/view/solo_drill_1_detections.mp4"
-                                  type="video/mp4"
-                                />
-                                Your browser does not support the video tag.
-                              </video>
-                            </div>
-                          </div>
-                        )}
-                        <a
-                          href={
-                            "http://127.0.0.1:8000/download/" + metric.video_url
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Button>Download</Button>
-                        </a>
-                        <Button
-                          onClick={() => showDeleteModal(metric.session_no)}
-                        >
-                          Delete
-                        </Button>
-                        {modalVisibility === metric.session_no && (
-                          <div className="modal">
-                            <div className="modal-content">
-                              <h3>
-                                Are you sure you want to delete this session?
-                              </h3>
-                              <div className="modal-actions">
+                          {/* Modal */}
+                          {isModalVisible && (
+                            <div
+                              className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50"
+                              onClick={closeModal} // Close the modal when clicking outside the content
+                            >
+                              <div
+                                className="bg-white rounded-lg overflow-hidden p-4 relative"
+                                onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal content
+                              >
                                 <Button
-                                  onClick={() =>
-                                    handleDelete(metric.session_no)
-                                  }
+                                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex justify-center items-center"
+                                  onClick={closeModal}
                                 >
-                                  Confirm
+                                  ✕
                                 </Button>
-                                <Button onClick={handleCancel}>Cancel</Button>
+
+                                <video controls width="600">
+                                  <source
+                                    src="http://127.0.0.1:8000/view/solo_drill_1_detections.mp4"
+                                    type="video/mp4"
+                                  />
+                                  Your browser does not support the video tag.
+                                </video>
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                          <a
+                            href={
+                              "http://127.0.0.1:8000/download/" +
+                              metric.video_url
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Button>Download</Button>
+                          </a>
+                          <Button
+                            onClick={() => showDeleteModal(metric.session_no)}
+                          >
+                            Delete
+                          </Button>
+                          {modalVisibility === metric.session_no && (
+                            <div className="modal">
+                              <div className="modal-content">
+                                <h3>
+                                  Are you sure you want to delete this session?
+                                </h3>
+                                <div className="modal-actions">
+                                  <Button
+                                    onClick={() =>
+                                      handleDelete(metric.session_no)
+                                    }
+                                  >
+                                    Confirm
+                                  </Button>
+                                  <Button onClick={handleCancel}>Cancel</Button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </CardBody>
-                </Card>
-              </React.Fragment>
-            ))
-          ) : (
-            <div className="col-span-2 text-center text-white">
-              <p>No data available</p>
+                    </CardBody>
+                  </Card>
+                </React.Fragment>
+              ))
+            ) : (
+              <div className="col-span-2 text-center text-white">
+                <p>No data available</p>
+              </div>
+            )}
+            <div className="mt-4 flex justify-center items-center">
+              <Pagination
+                initialPage={1}
+                total={Math.ceil(metrics.length / itemsPerPage)}
+                onChange={(page) => setCurrentPage(page)}
+              />
             </div>
-          )}
-        </div>
-        <div className="mt-4 flex justify-center items-center">
-          <Pagination
-            initialPage={1}
-            total={Math.ceil(metrics.length / itemsPerPage)}
-            onChange={(page) => setCurrentPage(page)}
-          />
-        </div>
+          </div>
+        ) : (
+          <div className="col-span-2 text-center text-white">
+            <p>Not logged in</p>
+          </div>
+        )}
       </div>
     </div>
   );
