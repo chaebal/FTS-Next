@@ -14,6 +14,7 @@ import { Button } from "@nextui-org/button";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
 import { FcGoogle } from "react-icons/fc";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 import {
   Card,
@@ -98,6 +99,7 @@ const TrainingDetails = () => {
   const [isModalVisibleCancel, setIsModalVisibleCancel] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
   const togglePopup = () => {
     setIsOpen(!isOpen);
@@ -248,6 +250,7 @@ const TrainingDetails = () => {
                       // onClick={() => {
                       //   signIn("google", { callbackUrl: "/dashboard" });
                       // }}
+                      onClick={() => signIn("google")}
                     >
                       <FcGoogle />
                       <span className="text-white text-sm">Google Sign In</span>
@@ -284,6 +287,7 @@ const TrainingDetails = () => {
           </div>
         </div>
         {isUser ? (
+          // {session ? (
           <div className="flex flex-2 flex-col gap-4 p-4 pt-0 mt-3 w-full items-center">
             {/* {metrics && metrics.length > 0 ? ( */}
             {currentMetrics && currentMetrics.length > 0 ? (
