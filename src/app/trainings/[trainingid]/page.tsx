@@ -14,7 +14,7 @@ import { Button } from "@nextui-org/button";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
 import { FcGoogle } from "react-icons/fc";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
 import {
   Card,
@@ -99,18 +99,18 @@ const TrainingDetails = () => {
   const [isModalVisibleCancel, setIsModalVisibleCancel] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession(); // Use useSession to get session state
 
   const togglePopup = () => {
     setIsOpen(!isOpen);
   };
 
   useEffect(() => {
+    // const player_id = session?.user?.id;
     const fetchData = async () => {
       try {
         const response = await fetch(
-          // `/api/sqlite/playermetrics?player_id=${playerID}`
-          `/api/sqlite/playermetrics?player_id=${1}`
+          `/api/sqlite/playermetrics?player_id=${session?.user?.id}`
         );
         const result = await response.json();
         console.log("result", result);
@@ -119,7 +119,7 @@ const TrainingDetails = () => {
         }
 
         setMetrics(result.metrics);
-        console.log(metrics);
+        // console.log(metrics);
         setError(null);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -128,7 +128,7 @@ const TrainingDetails = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [session]);
 
   const handleViewClick = () => {
     const url = `http://127.0.0.1:8000/download/solo_drill_1_detections.mp4`; // Replace with dynamic video filename
@@ -145,7 +145,7 @@ const TrainingDetails = () => {
     console.log("Session to be deleted: ", session_no);
     try {
       const response = await fetch(
-        `/api/sqlite/playermetrics?player_id=${1}&session_no=${session_no}`,
+        `/api/sqlite/playermetrics?player_id=${session?.user?.id}&session_no=${session_no}`,
         {
           method: "DELETE", // Specify DELETE method
         }
@@ -157,7 +157,7 @@ const TrainingDetails = () => {
       try {
         const response = await fetch(
           // `/api/sqlite/playermetrics?player_id=${playerID}`
-          `/api/sqlite/playermetrics?player_id=${1}`
+          `/api/sqlite/playermetrics?player_id=${session?.user?.id}`
         );
         const result = await response.json();
         console.log("result", result);
@@ -180,6 +180,29 @@ const TrainingDetails = () => {
     }
   };
 
+  const handleSignIn = async () => {
+    try {
+      // Trigger sign-in process
+      await signIn("google", { callbackUrl: "/trainings/dribbling" });
+
+      // Since `useSession` automatically updates, no need for getSession
+      if (session) {
+        console.log("Session Data:", session); // Log session data
+        setIsUser(true); // Update your component state
+      }
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut({ callbackUrl: "/trainings/dribbling" }); // Redirect after signing out if needed
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   const handleCancel = () => {
     setIsModalVisibleCancel(false);
     setModalVisibility(null);
@@ -195,90 +218,200 @@ const TrainingDetails = () => {
 
   return (
     <div>
-      <header>
-        <Navbar>
-          <NavbarBrand>
-            <QyveLogo />
-            <p className="font-bold text-inherit">QYVE+</p>
-          </NavbarBrand>
-          <NavbarContent
-            className="hidden sm:flex gap-4"
-            justify="center"
-          ></NavbarContent>
-          <NavbarContent justify="end">
-            <NavbarItem className="hidden lg:flex">
-              <Link href="#" onClick={togglePopup}>
-                Login
-              </Link>
-            </NavbarItem>
-            <NavbarItem>
-              {isOpen && (
-                <div className="absolute top-16 right-4 bg-white shadow-lg rounded-md p-4 z-10 justify-center items-center">
-                  <form className="space-y-4">
-                    <div>
-                      <label htmlFor="username" className="block text-gray-700">
-                        Username
-                      </label>
-                      <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
+      {session ? (
+        <header>
+          <Navbar>
+            <NavbarBrand>
+              <QyveLogo />
+              <p className="font-bold text-inherit">QYVE+</p>
+            </NavbarBrand>
+            <NavbarContent
+              className="hidden sm:flex gap-4"
+              justify="center"
+            ></NavbarContent>
+            <NavbarContent justify="end">
+              <NavbarItem className="hidden lg:flex">
+                Welcome, {session?.user?.name}
+                {/* {session?.user?.id} */}
+              </NavbarItem>
+              <NavbarItem className="hidden lg:flex">
+                <Button
+                  color="primary"
+                  href="#"
+                  variant="flat"
+                  onClick={handleSignOut} // Redirect after sign out
+                >
+                  Sign Out
+                </Button>
+              </NavbarItem>
+
+              <NavbarItem>
+                {isOpen && (
+                  <div className="absolute top-16 right-4 bg-white shadow-lg rounded-md p-4 z-10 justify-center items-center">
+                    <form className="space-y-4">
+                      <div>
+                        <label
+                          htmlFor="username"
+                          className="block text-gray-700"
+                        >
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          id="username"
+                          name="username"
+                          className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="password"
+                          className="block text-gray-700"
+                        >
+                          Password
+                        </label>
+                        <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full bg-indigo-500 text-white py-1 rounded-md hover:bg-indigo-600"
+                      >
+                        Login
+                      </button>
+                    </form>
+                    <div className="flex justify-center mt-4">
+                      <Button
+                        className="flex text-center gap-2 px-4 py-2 border border-gray-300 rounded-full text-white hover:border-gray-500 transition-all"
+                        // onClick={() => {
+                        //   signIn("google", { callbackUrl: "/dashboard" });
+                        // }}
+                        onClick={handleSignIn}
+                      >
+                        <FcGoogle />
+                        <span className="text-white text-sm">
+                          Google Sign In
+                        </span>
+                      </Button>
                     </div>
-                    <div>
-                      <label htmlFor="password" className="block text-gray-700">
-                        Password
-                      </label>
-                      <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full bg-indigo-500 text-white py-1 rounded-md hover:bg-indigo-600"
-                    >
-                      Login
-                    </button>
-                  </form>
-                  <div className="flex justify-center mt-4">
-                    <Button
-                      className="flex text-center gap-2 px-4 py-2 border border-gray-300 rounded-full text-white hover:border-gray-500 transition-all"
-                      // onClick={() => {
-                      //   signIn("google", { callbackUrl: "/dashboard" });
-                      // }}
-                      onClick={() => signIn("google")}
-                    >
-                      <FcGoogle />
-                      <span className="text-white text-sm">Google Sign In</span>
-                    </Button>
                   </div>
-                </div>
-              )}
-              <Button as={Link} color="primary" href="#" variant="flat">
-                Sign Up
-              </Button>
-            </NavbarItem>
-          </NavbarContent>
-        </Navbar>
-        <div className="flex flex-col justify-center items-center mt-10">
-          <h1 className="text-5xl font-bold mb-6">
-            Futsal Individual Drill Analyzer
-          </h1>
-          <div className="flex flex-col items-center">
-            <p className="text-md mb-2 mt-4">
-              QYVE+ is your handy video analyzer tool
-            </p>
-            <p className="text-md mb-2 mt-4">Record, Upload, and Analyze</p>
-            <p className="text-md mb-2 mt-4 font-bold">
-              Completely free to use
-            </p>
+                )}
+              </NavbarItem>
+            </NavbarContent>
+          </Navbar>
+          <div className="flex flex-col justify-center items-center mt-10">
+            <h1 className="text-5xl font-bold mb-6">
+              Futsal Individual Drill Analyzer
+            </h1>
+            <div className="flex flex-col items-center">
+              <p className="text-md mb-2 mt-4">
+                QYVE+ is your handy video analyzer tool
+              </p>
+              <p className="text-md mb-2 mt-4">Record, Upload, and Analyze</p>
+              <p className="text-md mb-2 mt-4 font-bold">
+                Completely free to use
+              </p>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      ) : (
+        <header>
+          <Navbar>
+            <NavbarBrand>
+              <QyveLogo />
+              <p className="font-bold text-inherit">QYVE+</p>
+            </NavbarBrand>
+            <NavbarContent
+              className="hidden sm:flex gap-4"
+              justify="center"
+            ></NavbarContent>
+            <NavbarContent justify="end">
+              <NavbarItem className="hidden lg:flex">
+                <Link href="#" onClick={togglePopup}>
+                  Login
+                </Link>
+              </NavbarItem>
+              <NavbarItem>
+                {isOpen && (
+                  <div className="absolute top-16 right-4 bg-white shadow-lg rounded-md p-4 z-10 justify-center items-center">
+                    <form className="space-y-4">
+                      <div>
+                        <label
+                          htmlFor="username"
+                          className="block text-gray-700"
+                        >
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          id="username"
+                          name="username"
+                          className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="password"
+                          className="block text-gray-700"
+                        >
+                          Password
+                        </label>
+                        <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full bg-indigo-500 text-white py-1 rounded-md hover:bg-indigo-600"
+                      >
+                        Login
+                      </button>
+                    </form>
+                    <div className="flex justify-center mt-4">
+                      <Button
+                        className="flex text-center gap-2 px-4 py-2 border border-gray-300 rounded-full text-white hover:border-gray-500 transition-all"
+                        // onClick={() => {
+                        //   signIn("google", { callbackUrl: "/dashboard" });
+                        // }}
+                        onClick={handleSignIn}
+                      >
+                        <FcGoogle />
+                        <span className="text-white text-sm">
+                          Google Sign In
+                        </span>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                <Button as={Link} color="primary" href="#" variant="flat">
+                  Sign Up
+                </Button>
+              </NavbarItem>
+            </NavbarContent>
+          </Navbar>
+          <div className="flex flex-col justify-center items-center mt-10">
+            <h1 className="text-5xl font-bold mb-6">
+              Futsal Individual Drill Analyzer
+            </h1>
+            <div className="flex flex-col items-center">
+              <p className="text-md mb-2 mt-4">
+                QYVE+ is your handy video analyzer tool
+              </p>
+              <p className="text-md mb-2 mt-4">Record, Upload, and Analyze</p>
+              <p className="text-md mb-2 mt-4 font-bold">
+                Completely free to use
+              </p>
+            </div>
+          </div>
+        </header>
+      )}
 
       <div>
         <div className="top-section mt-2 flex justify-center items-center w-full h-full">
@@ -286,8 +419,8 @@ const TrainingDetails = () => {
             <ImageChecking />
           </div>
         </div>
-        {isUser ? (
-          // {session ? (
+        {/* {session ? ( */}
+        {session ? (
           <div className="flex flex-2 flex-col gap-4 p-4 pt-0 mt-3 w-full items-center">
             {/* {metrics && metrics.length > 0 ? ( */}
             {currentMetrics && currentMetrics.length > 0 ? (
