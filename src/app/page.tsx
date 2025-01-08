@@ -192,12 +192,12 @@ const TrainingDetails = () => {
 
   //  ----------------------------- Replace with dynamic video filename
 
-  const handleViewClick = () => {
-    const url = `http://127.0.0.1:8000/download/solo_drill_1_detections.mp4`; // Replace with dynamic video filename
-    setVideoUrl(url);
-    setIsModalVisible(true); // Show the modal
-  };
-  //  -----------------------------
+  // const handleViewClick = () => {
+  //   const url = `http://127.0.0.1:8000/download/solo_drill_1_detections.mp4`; // Replace with dynamic video filename
+  //   setVideoUrl(url);
+  //   setIsModalVisible(true); // Show the modal
+  // };
+  // //  -----------------------------
   const closeModal = () => {
     setIsModalVisible(false); // Hide the modal
     setVideoUrl(""); // Reset the video URL
@@ -750,7 +750,10 @@ const TrainingDetails = () => {
                         <div className="flex space-x-4">
                           <Button
                             className="bg-blue-500 text-white px-4 py-2 rounded "
-                            onClick={handleViewClick}
+                            onClick={() => {
+                              setVideoUrl(metric.video_url);
+                              setIsModalVisible(true);
+                            }}
                           >
                             View
                           </Button>
@@ -774,7 +777,7 @@ const TrainingDetails = () => {
 
                                 <video controls width="600">
                                   <source
-                                    src="http://127.0.0.1:8000/view/solo_drill_1_detections.mp4"
+                                    src={metric.video_url}
                                     type="video/mp4"
                                   />
                                   Your browser does not support the video tag.
