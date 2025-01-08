@@ -12,7 +12,11 @@ type Coordinate = {
   y: number;
 } | null;
 
-const ImageChecking = () => {
+type ImageCheckingProps = {
+  user_id: string; // Ensuring user_id is always a string
+};
+
+const ImageChecking: React.FC<ImageCheckingProps> = ({ user_id }) => {
   const [video, setVideo] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
@@ -99,9 +103,7 @@ const ImageChecking = () => {
   const handleSubmit = async () => {
     setIsLoadingCoord(true);
     setIsDone(false);
-
     if (!video) {
-      // setUploadMessage("Please choose a video file.");
       return;
     }
 
@@ -149,41 +151,7 @@ const ImageChecking = () => {
       console.error("Error: frameUrl is null");
     }
 
-    // try {
-    //   const xhr = new XMLHttpRequest();
-    //   xhr.open("POST", "http://127.0.0.1:8000/upload/", true);
-
-    //   // Set up event listener to track the upload progress
-    //   xhr.upload.onprogress = (event) => {
-    //     if (event.lengthComputable) {
-    //       const progress = (event.loaded / event.total) * 100;
-    //       setUploadProgress(progress); // Update the progress state
-    //     }
-    //   };
-
-    //   xhr.onload = async () => {
-    //     if (xhr.status === 200) {
-    //       const data = JSON.parse(xhr.responseText);
-    //       console.log("data", data);
-    //       console.log("data.info", data.info);
-    //       toast.success("Analyzing Complete!");
-    //     } else {
-    //       console.error("Failed to upload video");
-    //     }
-    //   };
-
-    //   xhr.onerror = () => {
-    //     console.error("An error occurred during upload");
-    //   };
-
-    //   xhr.send(formData); // Send the request with formData
-    // } catch (error) {
-    //   console.error("An error occurred while uploading.", error);
-    // } finally {
-    //   setIsLoadingProcessing(false);
-    //   setIsDone(true);
-    //   toast.success("Analyzing Complete!");
-    // }
+    formData.append("player_id", user_id);
 
     try {
       const response = await fetch("http://127.0.0.1:8000/upload/", {

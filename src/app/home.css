@@ -1,0 +1,109 @@
+/* The grid layout for the cards */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  grid-gap: 20px; /* Space between the cards */
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.metric-card {
+  /* Customize card style here if needed */
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.card-header {
+  font-size: 0.9rem;
+  color: #555;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.card-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.card-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.no-data-card {
+  grid-column: span 2;
+  text-align: center;
+  background-color: #e0e0e0;
+  padding: 20px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Modal container styling */
+.modal {
+  /* position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 1000; */
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex; /* Centers modal-content horizontally and vertically */
+  justify-content: center; /* Centers content horizontally */
+  align-items: center; /* Centers content vertically */
+  z-index: 1000; /* Ensures modal stays on top of other elements */
+  backdrop-filter: blur(
+    5px
+  ); /* Optional: adds a blur effect to the background */
+}
+
+/* Modal content styling */
+.modal-content {
+  /* background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px;
+    text-align: center; */
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px; /* Adjust width as needed */
+  max-width: 100%; /* Makes sure the modal content doesn't overflow */
+  display: flex; /* Make sure to use flex for better layout control */
+  flex-direction: column; /* Stack content (message and buttons) vertically */
+  justify-content: center; /* Vertically centers the content inside the modal */
+  align-items: center; /* Horizontally centers the content inside the modal */
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow effect for the modal */
+}
+
+/* Buttons styling */
+.modal-actions {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 10px;
+}

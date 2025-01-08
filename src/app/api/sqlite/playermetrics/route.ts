@@ -1,12 +1,15 @@
 import sqlite3 from "better-sqlite3";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "next-auth/react";
+import { getToken } from "next-auth/jwt";
 
-const dbPath = path.resolve("/Users/adam/Documents/fts-backend/futsal_db.db");
+// const dbPath = path.resolve("/Users/adam/Documents/fts-backend/futsal_db.db");
+const dbPath = path.resolve("/Users/adam/Documents/fts-backend/session.db");
 const db = sqlite3(dbPath);
 
 interface stats {
-  player_id: number;
+  player_id: string;
   training_id: number;
   speed: number;
   distance: number;
@@ -14,59 +17,70 @@ interface stats {
 }
 
 export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const player_id = searchParams.get("player_id");
-
-    if (!player_id) {
-      return NextResponse.json(
-        { error: "Player ID required" },
-        { status: 400 }
-      );
-    }
-
-    const query = "SELECT * FROM PlayerMetrics WHERE player_id = ?";
-    const metrics = db.prepare(query).all(Number(player_id));
-
-    return NextResponse.json({ metrics });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+  // try {
+  //   const { searchParams } = new URL(req.url);
+  //   const player_id = searchParams.get("player_id");
+  //   if (!player_id) {
+  //     return NextResponse.json(
+  //       { error: "Player ID required" },
+  //       { status: 400 }
+  //     );
+  //   }
+  //   // const query = "SELECT * FROM PlayerMetrics WHERE player_id = ?";
+  //   const query = "SELECT * FROM session WHERE player_id = ?";
+  //   // const metrics = db.prepare(query).all(Number(player_id));
+  //   const metrics = db.prepare(query).all(player_id);
+  //   console.log("metrics: ", metrics);
+  //   return NextResponse.json({ metrics });
+  // } catch (error) {
+  //   return NextResponse.json(
+  //     { error: "Internal Server Error" },
+  //     { status: 500 }
+  //   );
+  // }
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json(); // Parse request body to JSON
-    const { player_id, training_id, speed, distance, time } = body;
+  const { player_id } = await req.json();
+  // if (!player_id) {
+  //   return NextResponse.json({ error: "Player ID required" }, { status: 400 });
+  // }
+  // Fetch data based on player_id
 
-    if (!player_id || !training_id || !speed || !distance || !time) {
-      return NextResponse.json(
-        { error: "All fields are required." },
-        { status: 400 }
-      );
-    }
+  const query = "SELECT * FROM session WHERE player_id = ?";
 
-    db.prepare(
-      `
-        INSERT INTO PlayerMetrics (player_id, training_id, speed, distance, time)
-        VALUES (?, ?, ?, ?, ?)
-    `
-    ).run(player_id, training_id, speed, distance, time);
+  // const metrics = db.prepare(query).all(Number(player_id));
+  const metrics = db.prepare(query).all(player_id);
+  console.log("player_id: ", player_id);
+  console.log("metrics: ", metrics);
+  return NextResponse.json({ metrics });
 
-    return NextResponse.json(
-      { message: "Player metrics updated successfully." },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("API error");
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+  // try {
+  //   const body = await req.json(); // Parse request body to JSON
+  //   const { player_id, training_id, speed, distance, time } = body;
+  //   if (!player_id || !training_id || !speed || !distance || !time) {
+  //     return NextResponse.json(
+  //       { error: "All fields are required." },
+  //       { status: 400 }
+  //     );
+  //   }
+  //   db.prepare(
+  //     `
+  //       INSERT INTO PlayerMetrics (player_id, training_id, speed, distance, time)
+  //       VALUES (?, ?, ?, ?, ?)
+  //   `
+  //   ).run(player_id, training_id, speed, distance, time);
+  //   return NextResponse.json(
+  //     { message: "Player metrics updated successfully." },
+  //     { status: 200 }
+  //   );
+  // } catch (error) {
+  //   console.error("API error");
+  //   return NextResponse.json(
+  //     { error: "Internal Server Error" },
+  //     { status: 500 }
+  //   );
+  // }
 }
 
 export async function DELETE(req: NextRequest) {
@@ -91,22 +105,31 @@ export async function DELETE(req: NextRequest) {
     }
 
     db.prepare(
+      //   `
+      //     DELETE FROM PlayerMetrics WHERE player_id = ? AND session_no = ?
+      // `
       `
-        DELETE FROM PlayerMetrics WHERE player_id = ? AND session_no = ?
+        DELETE FROM session WHERE player_id = ? AND session_no = ?
     `
     ).run(player_id, session_no);
 
     const remainingRow = db
       .prepare(
-        `SELECT * FROM PlayerMetrics WHERE player_id = ? AND session_no = ?`
+        // `SELECT * FROM PlayerMetrics WHERE player_id = ? AND session_no = ?`
+        `SELECT * FROM session WHERE player_id = ? AND session_no = ?`
       )
       .get(player_id, session_no);
 
     // Check if any row was deleted
     if (!remainingRow) {
       db.prepare(
+        //         `
+        //       UPDATE PlayerMetrics
+        // SET session_no = session_no - 1
+        // WHERE player_id = ? AND session_no > ?
+        //     `
         `
-      UPDATE PlayerMetrics
+      UPDATE session
 SET session_no = session_no - 1
 WHERE player_id = ? AND session_no > ?
     `

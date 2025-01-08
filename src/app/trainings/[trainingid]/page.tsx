@@ -98,8 +98,12 @@ const TrainingDetails = () => {
   const currentMetrics = metrics.slice(startIndex, endIndex);
   const [isModalVisibleCancel, setIsModalVisibleCancel] = useState(false);
   const [isUser, setIsUser] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [userID, setUserID] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { data: session, status } = useSession(); // Use useSession to get session state
+  const [guest, isGuest] = useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
 
   const togglePopup = () => {
     setIsOpen(!isOpen);
@@ -111,6 +115,7 @@ const TrainingDetails = () => {
       try {
         const response = await fetch(
           `/api/sqlite/playermetrics?player_id=${session?.user?.id}`
+          // `/api/sqlite/playermetrics?player_id=${userID}`
         );
         const result = await response.json();
         console.log("result", result);
@@ -119,7 +124,6 @@ const TrainingDetails = () => {
         }
 
         setMetrics(result.metrics);
-        // console.log(metrics);
         setError(null);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -130,12 +134,14 @@ const TrainingDetails = () => {
     fetchData();
   }, [session]);
 
+  //  ----------------------------- Replace with dynamic video filename
+
   const handleViewClick = () => {
     const url = `http://127.0.0.1:8000/download/solo_drill_1_detections.mp4`; // Replace with dynamic video filename
     setVideoUrl(url);
     setIsModalVisible(true); // Show the modal
   };
-
+  //  -----------------------------
   const closeModal = () => {
     setIsModalVisible(false); // Hide the modal
     setVideoUrl(""); // Reset the video URL
@@ -184,11 +190,15 @@ const TrainingDetails = () => {
     try {
       // Trigger sign-in process
       await signIn("google", { callbackUrl: "/trainings/dribbling" });
+      const session = await getSession(); // Adjust this according to the authentication method
 
       // Since `useSession` automatically updates, no need for getSession
       if (session) {
-        console.log("Session Data:", session); // Log session data
-        setIsUser(true); // Update your component state
+        // setUserName(session.user?.name || null);
+        // setUserID(session.user?.id || null);
+        // setIsUser(true); // Update your component state
+        // setIsUserAuthenticated(true); // User is now authenticated
+        console.log("username: ", userName);
       }
     } catch (error) {
       console.error("Error signing in:", error);
@@ -232,6 +242,7 @@ const TrainingDetails = () => {
             <NavbarContent justify="end">
               <NavbarItem className="hidden lg:flex">
                 Welcome, {session?.user?.name}
+                {/* Welcome, {userName} */}
                 {/* {session?.user?.id} */}
               </NavbarItem>
               <NavbarItem className="hidden lg:flex">
@@ -377,9 +388,6 @@ const TrainingDetails = () => {
                     <div className="flex justify-center mt-4">
                       <Button
                         className="flex text-center gap-2 px-4 py-2 border border-gray-300 rounded-full text-white hover:border-gray-500 transition-all"
-                        // onClick={() => {
-                        //   signIn("google", { callbackUrl: "/dashboard" });
-                        // }}
                         onClick={handleSignIn}
                       >
                         <FcGoogle />
@@ -416,7 +424,7 @@ const TrainingDetails = () => {
       <div>
         <div className="top-section mt-2 flex justify-center items-center w-full h-full">
           <div className="flex flex-col w-3/4 border border-dashed border-gray-400 p-4 h-64 items-center justify-center rounded-lg">
-            <ImageChecking />
+            <ImageChecking user_id={session?.user?.id ?? "guest"} />
           </div>
         </div>
         {/* {session ? ( */}
